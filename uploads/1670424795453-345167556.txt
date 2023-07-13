@@ -1,0 +1,385 @@
+map<ll, ll>pf(ll N)
+{
+    // O(sqrt(n))
+    map<ll, ll> mp;
+    for (ll i = 2; i * i <= N; i++)
+    {
+        if (N % i == 0)
+        {
+            ll cnt = 0;
+            while (N % i == 0)
+            {
+                N /= i;
+                cnt++;
+            }
+            mp[i] = cnt;
+        }
+    }
+    if (N > 1)
+        mp[N]++;
+    return mp;
+}
+
+ll spf[N];
+void SPF()
+{
+    // Time Complexity : O(nloglog(n))
+    for (ll i = 1; i <= N; i++)
+        spf[i] = i;
+    for (ll i = 2; i <= N; i += 2)
+        spf[i] = 2;
+    for (ll i = 3; i * i <= N; i++)
+    {
+        if (spf[i] == i)
+        {
+            for (ll j = i * i; j <= N; j += i)
+            {
+                if (spf[j] == j)
+                {
+                    spf[j] = i;
+                }
+            }
+        }
+    }
+}
+
+map<ll, ll>pf(ll N)
+{
+    // O(log(n))
+    map<ll, ll> mp;
+    while (N != 1)
+    {
+        mp[spf[N]]++;
+        N /= spf[N];
+    }
+    return mp;
+
+    /*
+    vl v;
+    while(N!=1)
+    {
+        ll d=spf[N];
+        v.pb(d);
+        while(N%d==0)N/=d;
+    }
+    */
+}
+
+bool pp[N];
+void seive()
+{
+     // Time Complexity : O(nloglog(n))
+    for (ll i = 1; i <= N; i++)
+    pp[i] = true;
+    pp[0] = pp[1] = false;
+    for (ll i = 2; i * i <= N; i++)
+    {
+        if (pp[i])
+        {
+            for (ll j = i * i; j <= N; j += i)
+            {
+                pp[j] = false;
+            }
+        }
+    }
+}
+vector<ll>getprime(ll N)
+{
+    // get primes upto N
+    vector<ll> p;
+    for (ll i = 1; i <= N; i++)
+    {
+        if (pp[i])
+        {
+            p.pb(i);
+        }
+    }
+    return p;
+}
+
+ll divisors[N];
+void divisors_count()
+{
+    for (int i = 1; i <= N; ++i)
+        for (int j = i; j <= N; j += i)
+            ++divisors[j];
+    // count divisors in O(nlog(n))
+    //divisors[j] stores count of divisors of number j
+}
+
+ll sumdiv[N];
+void sum_of_divisors()
+{
+    for (int i = 1; i <= N; ++i)
+        for (int j = i; j <= N; j += i)
+            sumdiv[j] += i;
+    // O(nlog(n))
+    // sumdiv[i] stores sum of divisors of number i
+}
+
+ll phi(ll N)
+{
+    // O(sqrt(n))
+    // numbers from 1 to N which are coprime with N
+    // phi(a*b)=phi(a)*phi(b)   ,if(a & b are coprime)
+    // phi(p^k)=p^k-p^(k-1)     ,where p is prime
+    // phi(p)=p-1;              ,where p is prime
+    // φ (n) = n *(1 – 1/p 1)*(1 – 1/p 2) * … * (1 – 1/p k)
+    ll result = N;
+    for (ll i = 2; i * i <= N; i++)
+    {
+        if (N % i == 0)
+        {
+            result -= result / i;
+            while (N % i == 0)
+            {
+                N /= i;
+            }
+        }
+    }
+    if (N > 1)
+        result -= result / N;
+    return result;
+}
+
+ll f[N]; //factorial
+ll I[N]; // inverse
+void precompute(ll mod)
+{
+    f[0] = 1;
+    f[1] = 1;
+    for (ll i = 2; i <= N; i++)
+    {
+        f[i] = (f[i - 1] * i) % mod;
+    }
+    I[N] = inv(f[N], mod);
+    for (ll i = N - 1; i >= 1; i--)
+    {
+        I[i] = (I[i + 1] * (i + 1)) % mod;
+    }
+}
+ll CC(ll n, ll r)
+{
+    if (r > n || n < 0 || r < 0)
+        return 0;
+    ll ans = f[n];
+    ans = (ans * I[r]) % M;
+    ans = (ans * I[n - r]) % M;
+    return ans;
+}
+
+vector<ll>phi_1_to_n(ll n) {
+
+    //   ∑(d|n) ϕ(d)=n
+    // gives vector of phi
+    // O(nloglog(n))
+    vector<ll> phi(n + 1);
+    phi[0] = 0;
+    phi[1] = 1;
+    for (ll i = 2; i <= n; i++)
+        phi[i] = i;
+
+    for (ll i = 2; i <= n; i++) {
+        if (phi[i] == i) {
+            for (ll j = i; j <= n; j += i)
+                phi[j] -= phi[j] / i;
+        }
+    }
+    return phi;
+}
+
+   
+vl ar[N];
+ll start_pos[N],end_pos[N],lvl[N];
+vl fla;
+// subtree of a particular node ocuurs continuously in flattened tree
+// Any subtree would be present as a range
+// Nodes from subtree of a node at given level , they are in order(continuous)
+// start_pos is similar to intime
+// end_pos is similar to end time
+void dfs(ll node,ll par,ll h)
+{
+    fla.pb(node);
+    start_pos[node]=sz(fla);
+    lvl[node]=h;
+    for(auto child:ar[node])
+    {
+        if(child!=par)
+        {
+            dfs(child,node,h+1);
+        }
+    }
+    end_pos[node]=sz(fla);
+}
+
+
+
+int dx[]={0,1,0,-1};
+int dy[]={1,0,-1,0};   //R D L U
+int dx[] = {+0,+0,+1,-1,-1,+1,-1,+1}; ///King's move
+int dy[] = {-1,+1,+0,+0,+1,+1,-1,-1}; ///king's Move
+int dx[] = {-2,-2,-1,-1,+1,+1,+2,+2}; ///knight's move
+int dy[] = {-1,+1,-2,+2,-2,+2,-1,+1}; ///knight's move
+
+struct Node
+{
+	ll m,c;
+};
+struct segtree
+{
+	vector<Node>Min;
+	void init(ll n)
+	{
+		Min.resize(2*n+2);
+	}
+	Node merge(Node a,Node b)
+	{
+		if(a.m<b.m)return a;
+		if(a.m>b.m)return b;
+		return {a.m,a.c+b.c};
+	}
+	void update(ll node,ll lx,ll rx,ll idx,ll val)
+	{
+		if(lx==rx)
+		{
+			Min[node].m=val;
+			Min[node].c=1;
+			return;
+		}
+		ll mid=(lx+rx)/2;
+		if(idx<=mid)
+		{
+			update(2*node,lx,mid,idx,val);
+		}
+		else{
+			update(2*node+1,mid+1,rx,idx,val);
+		}
+		Min[node]=merge(Min[2*node],Min[2*node+1]);
+	}
+ 
+	void build(ll node,vector<ll>&a,ll lx,ll rx)
+	{
+		if(lx==rx)
+		{
+			if(lx<a.size())
+		    {
+			Min[node].m=a[lx];
+		    Min[node].c=1;
+		    }
+		    else
+		    {
+		    	Min[node].m=inf;
+		        Min[node].c=0;
+		    }
+		    return; 
+		}
+		ll mid=(lx+rx)/2;
+		build(2*node,a,lx,mid);
+		build(2*node+1,a,mid+1,rx);
+		Min[node]=merge(Min[2*node],Min[2*node+1]);
+	 }
+ 
+	Node query(ll node,ll lx,ll rx,ll l,ll r)
+	{
+		if(lx>=l && rx<=r)return Min[node];
+		if(rx<l || lx>r)return {inf,0};
+		ll mid=(lx+rx)/2;
+		Node s1=query(2*node,lx,mid,l,r);
+		Node s2=query(2*node+1,mid+1,rx,l,r);
+		return merge(s1,s2);
+	}
+};
+ 
+ll up[N][20];
+ll lvl[N];
+vector<ll>ar[N];
+void dfs(ll node,ll par,ll level=0)
+{
+    //binary lifting 
+    lvl[node]=level;
+    up[node][0]=par;
+    for(ll i=1;i<20;i++)
+    {
+        if(up[node][i-1]==-1)
+        {
+            up[node][i]=-1;
+        }
+        else
+        {
+            up[node][i]=up[up[node][i-1]][i-1];
+        }
+    }
+    for(auto child:ar[node])
+    {
+        if(child!=par)
+        dfs(child,node,level+1);
+    }
+}
+
+ll jump(ll node,ll K)
+{
+    // getting Kth parent of given node
+    for(ll i=19;i>=0;i--)
+    {
+        if(node==-1)return node;
+        if((K&(1LL<<i))>0)
+        {
+            node=up[node][i];
+        }
+    }
+    return node;
+}
+
+ll LCA(ll u,ll v)
+{
+    if(lvl[u]<lvl[v])
+    swap(u,v);
+    u=jump(u,lvl[u]-lvl[v]);
+    if(u==v)return u;
+
+    for(ll i=19;i>=0;i--)
+    {
+        if(up[u][i]!=up[v][i])
+        {
+            u=up[u][i];
+            v=up[v][i];
+        }
+    }
+    return jump(u,1);
+}
+
+ll find(ll node,vector<ll>&par)
+{
+    if(par[node]==node)return node;
+    return par[node]=find(par[node],par);
+}
+void merge(ll a,ll b,vector<ll>&par,vector<ll>&R)
+{
+    //  Rank stores the size of that subtree
+    a=find(a,par);
+    b=find(b,par);
+    if (a != b) {
+        if (R[a] < R[b])
+            swap(a, b);
+        par[b]=a;
+        R[a]+=R[b];
+    }
+}
+
+void PREFIXONGRID(vvl &pre,vvl &a,ll n,ll m)
+{
+    //PASS PREFIX SUM VECTOR , ORIGINAL VECTOR , # OF ROWS ,# OF COLUMS;
+    for(ll i=1;i<=n;i++)
+    {
+        for(ll j=1;j<=m;j++)
+        {
+            pre[i][j]=pre[i-1][j]+pre[i][j-1]-pre[i-1][j-1]+a[i][j];
+        }
+    }
+}
+long long query(vvl &pre,ll x1,ll y1,ll x2,ll y2)
+{
+    // PASS PREFIX SUM VECTOR , INITIAL && FINAL COORDINATES
+    ll ans=pre[x2][y2]-pre[x1-1][y2]-pre[x2][y1-1]+pre[x1-1][y1-1];
+    return ans;
+}
