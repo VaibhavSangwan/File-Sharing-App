@@ -18,15 +18,6 @@ A file sharing application built using Express.js, MongoDB, and JavaScript.
 - MongoDB 
 - NPM
 
-## Installation
-
-
-1. Clone the repository:
-   
-
-```bash
-git clone <repository_url>
-
 ## Deployment Link
-https://file-sharing-app-viaf.onrender.com/
+ https://file-sharing-app-viaf.onrender.com/
 
