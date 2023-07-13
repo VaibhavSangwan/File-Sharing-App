@@ -1,8 +1,30 @@
-After download or clone run npm install OR yarn install to install all the dependancies. also do not forget to rename .env.example into .env an put all creadentials
+# File Sharing App
+
+A file sharing application built using Express.js, MongoDB, and JavaScript.
+
+## Features
+
+- Upload files to the server
+- Generate unique download links for files
+- Send files directly via email
+- Authentication and authorization with JWT
+- CORS setup for cross-origin resource sharing
+- SMTP setup for sending emails using a third-party service
+- Deployment to Heroku
+
+## Prerequisites
+
+- Node.js 
+- MongoDB 
+- NPM
+
+## Installation
 
 
-Difference between encryption and hasing?
-https://www.geeksforgeeks.org/difference-between-hashing-and-encryption/
+1. Clone the repository:
+   
 
-Bcrypt algorithm:
-https://www.topcoder.com/thrive/articles/bcrypt-algorithm?utm_source=thrive&utm_campaign=thrive-feed&utm_medium=rss-feed
+```bash
+git clone <repository_url>
+## Deployment Link->https://file-sharing-app-viaf.onrender.com/
+
